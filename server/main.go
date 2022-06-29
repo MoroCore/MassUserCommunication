@@ -1,7 +1,11 @@
 package main
 
 import (
+	"MassUserCommunication/message"
+	"encoding/binary"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 )
 
@@ -15,7 +19,7 @@ import (
 func main() {
 
 	fmt.Println("服务器在8889端口监听.......")
-	listener, err := net.Listen("tcp", "0.0.0.0:8889")
+	listener, err := net.Listen("tcp", "0.0.0.0:9001")
 	if err != nil {
 		fmt.Println("net.Listen err = ", err)
 		return
@@ -32,15 +36,42 @@ func main() {
 func process(conn net.Conn) {
 
 	defer conn.Close()
-
 	for {
-		buf := make([]byte, 8096)
-		fmt.Println("读取客户端发送的数据")
-		n, err := conn.Read(buf[:4])
-		if n != 4 || err != nil {
-			fmt.Println("conn.Read err = ", err)
+
+		_, err := readPkg(conn)
+		if err != nil {
+			if err == io.EOF {
+				fmt.Println("客户端退出,服务器段也退出")
+				return
+			} else {
+				fmt.Println("readPkg err = ", err)
+				return
+			}
+		}
+		//err = serverProcessMes(conn, &mes)
+		if err != nil {
 			return
 		}
-		fmt.Println("读取到buf = ", buf[:4])
 	}
+}
+func readPkg(conn net.Conn) (mes message.Message, err error) {
+
+	buf := make([]byte, 8096)
+	fmt.Println("读取客户端发送的数据")
+	_, err = conn.Read(buf[:4])
+	if err != nil {
+		return
+	}
+	var pkgLen uint32
+	pkgLen = binary.BigEndian.Uint32(buf[0:4])
+	n, err := conn.Read(buf[:pkgLen])
+	if n != int(pkgLen) || err != nil {
+		return
+	}
+	err = json.Unmarshal(buf[:pkgLen], &mes)
+	if err != nil {
+		fmt.Println("json.Unmarshal err = ", err)
+		return
+	}
+	return
 }
