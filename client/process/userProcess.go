@@ -89,20 +89,6 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 		return
 	}
 
-	//var pkgLen uint32
-	//pkgLen = uint32(len(data))
-	//var bytes [4]byte
-	//buf := bytes[:4]
-	//binary.BigEndian.PutUint32(buf, pkgLen)
-	//n, err := conn.Write(buf)
-	//if n != 4 || err != nil {
-	//	fmt.Println("conn.Write(buf) fail ", err)
-	//}
-	//_, err = conn.Write(data)
-	//if err != nil {
-	//	fmt.Println("conn.Write(data) fail", err)
-	//	return
-	//}
 	tf := &utils.Transfer{
 		Conn: conn,
 	}
@@ -118,7 +104,19 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	var loginResMes message.LoginResMes
 	err = json.Unmarshal([]byte(mes.Data), &loginResMes)
 	if loginResMes.Code == 200 {
-		fmt.Println("登录成功")
+		fmt.Println("当前用户列表如下")
+		for _, v := range loginResMes.UserId {
+			if v != userId {
+				user := &message.User{
+					UserId:     v,
+					UserStatus: message.UserOnLine,
+				}
+				onlineUsers[v] = user
+			}
+		}
+		fmt.Print("\n\n")
+		go serverProcessMes(conn)
+
 		for {
 			ShowMenu()
 		}

@@ -1,7 +1,11 @@
 package process
 
 import (
+	"MassUserCommunication/client/utils"
+	"MassUserCommunication/common/message"
+	"encoding/json"
 	"fmt"
+	"net"
 	"os"
 )
 
@@ -27,5 +31,29 @@ func ShowMenu() {
 		os.Exit(0)
 	default:
 		fmt.Println("输入数据格式不对")
+	}
+}
+
+func serverProcessMes(conn net.Conn) {
+
+	tf := &utils.Transfer{
+		Conn: conn,
+	}
+	for {
+		fmt.Println("客户端等待读取服务器发送的消息")
+		mes, err := tf.ReadPkg()
+		if err != nil {
+			fmt.Println("tf.ReadPkg err= ", err)
+			return
+		}
+		fmt.Println("mes = %v \n", mes)
+		switch mes.Type {
+		case message.NotifyUserStatusMesType:
+			var notifyUserStatusMes message.NotifyUserStatusMes
+			json.Unmarshal([]byte(mes.Data), &notifyUserStatusMes)
+			updateUserStatus(&notifyUserStatusMes)
+		default:
+			fmt.Println("服务器端返回了未知的消息类型")
+		}
 	}
 }

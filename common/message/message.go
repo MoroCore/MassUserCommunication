@@ -1,10 +1,17 @@
 package message
 
 const (
-	LoginMesType       = "LoginMes"
-	LoginResMesType    = "LoginResMes"
-	RegisterMesType    = "RegisterMes"
-	RegisterResMesType = "RegisterResMes"
+	LoginMesType            = "LoginMes"
+	LoginResMesType         = "LoginResMes"
+	RegisterMesType         = "RegisterMes"
+	RegisterResMesType      = "RegisterResMes"
+	NotifyUserStatusMesType = "NotifyUserStatusMes"
+)
+
+const (
+	UserOnLine = iota
+	UserOffLine
+	UserBysyStatus
 )
 
 //网络上发送的Message消息  序列化
@@ -19,8 +26,9 @@ type LoginMes struct {
 	UserName string `json:"userName"` //用户名
 }
 type LoginResMes struct {
-	Code  int    `json:"code"`  //注册码  500 200
-	Error string `json:"error"` //
+	Code   int    `json:"code"` //注册码  500 200
+	UserId []int  `json:"userId"`
+	Error  string `json:"error"` //
 }
 type RegisterMes struct {
 	User User
@@ -28,4 +36,8 @@ type RegisterMes struct {
 type RegisterResMes struct {
 	Code  int    `json:"code"`
 	Error string `json:"error"`
+}
+type NotifyUserStatusMes struct {
+	UserId int `json:"userId"`
+	Status int `json:"status"`
 }

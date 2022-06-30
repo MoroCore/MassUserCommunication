@@ -10,7 +10,8 @@ import (
 )
 
 type UserProcess struct {
-	Coon net.Conn
+	Coon   net.Conn
+	UserId int
 }
 
 func (this *UserProcess) ServerPRocessRegister(mes *message.Message) (err error) {
@@ -62,9 +63,18 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	resMes.Type = message.LoginResMesType
 
 	var loginResMes message.LoginResMes
-	_, err = model.MyUserDao.LoginCheck(loginMes.UserId, loginMes.UserPwd)
+	user, err := model.MyUserDao.LoginCheck(loginMes.UserId, loginMes.UserPwd)
 	if err == nil {
 		loginResMes.Code = 200
+		this.UserId = user.UserId
+		userMgr.addOnlineUser(this)
+
+		this.NotifyOtherOnlineUser(user.UserId)
+
+		for id, _ := range userMgr.onlineUsers {
+			loginResMes.UserId = append(loginResMes.UserId, id)
+		}
+
 	}
 	if err != nil {
 		loginResMes.Code = 500
@@ -82,4 +92,36 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 	}
 	err = tf.WritePkg(data)
 	return
+}
+func (this *UserProcess) NotifyOtherOnlineUser(userId int) {
+	for id, up := range userMgr.onlineUsers {
+		if id == userId {
+			up.NotifyMeOnline(id)
+		}
+		//
+	}
+}
+func (this *UserProcess) NotifyMeOnline(userId int) {
+	var mes message.Message
+	mes.Type = message.NotifyUserStatusMesType
+
+	var notifyUserStatusMes message.NotifyUserStatusMes
+	notifyUserStatusMes.UserId = userId
+	notifyUserStatusMes.Status = message.UserOnLine
+	marshal, err := json.Marshal(notifyUserStatusMes)
+	if err != nil {
+		fmt.Println("json.Marshal fail ", err)
+		return
+	}
+	mes.Data = string(marshal)
+
+	bytes, err := json.Marshal(mes)
+	if err != nil {
+		fmt.Println("json.Marshal fail ", err)
+		return
+	}
+	tf := &utils.Transfer{
+		Conn: this.Coon,
+	}
+	tf.WritePkg(bytes)
 }

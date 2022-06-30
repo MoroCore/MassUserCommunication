@@ -32,8 +32,8 @@ func main() {
 	initPool("192.168.10.10:6379", 16, 0, 300*time.Second)
 	initUserDao()
 
-	fmt.Println("服务器在8889端口监听.......")
-	listener, err := net.Listen("tcp", "0.0.0.0:9001")
+	fmt.Println("服务器在9001端口监听.......")
+	listener, err := net.Listen("tcp", "localhost:9001")
 	defer listener.Close()
 	if err != nil {
 		//如果监听的端口已被占用
