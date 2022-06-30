@@ -1,9 +1,10 @@
 package message
 
 const (
-	LoginMesType    = "LoginMes"
-	LoginResMesType = "LoginResMes"
-	RegisterMesType = "RegisterMes"
+	LoginMesType       = "LoginMes"
+	LoginResMesType    = "LoginResMes"
+	RegisterMesType    = "RegisterMes"
+	RegisterResMesType = "RegisterResMes"
 )
 
 //网络上发送的Message消息  序列化
@@ -22,4 +23,9 @@ type LoginResMes struct {
 	Error string `json:"error"` //
 }
 type RegisterMes struct {
+	User User
+}
+type RegisterResMes struct {
+	Code  int    `json:"code"`
+	Error string `json:"error"`
 }

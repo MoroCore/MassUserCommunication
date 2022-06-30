@@ -15,6 +15,7 @@ import (
 
 var userId int
 var userPwd string
+var userName string
 
 func main() {
 
@@ -37,12 +38,19 @@ func main() {
 			fmt.Println("请输入用户的id")
 			fmt.Scanf("%d \n", &userId)
 			fmt.Println("请输入用户的密码")
-			//fmt.Scanf(&userPwd)  如果这样写   输出\n 无法结束
 			fmt.Scanf("%s \n", &userPwd)
 			up := &process.UserProcess{}
 			up.Login(userId, userPwd)
 		case 2:
 			fmt.Println("注册用户")
+			fmt.Println("请输入用户的id")
+			fmt.Scanf("%d \n", &userId)
+			fmt.Println("请输入用户的密码")
+			fmt.Scanf("%s \n", &userPwd)
+			fmt.Println("请输入用户的昵称")
+			fmt.Scanf("%s \n", &userName)
+			up := &process.UserProcess{}
+			up.Register(userId, userPwd, userName)
 		case 3:
 			fmt.Println("退出系统")
 			os.Exit(0)

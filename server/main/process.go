@@ -17,18 +17,20 @@ func (this *Processor) serverProcessMes(mes *message.Message) (err error) {
 
 	switch mes.Type {
 	case message.LoginMesType:
-		//处理登录逻辑
 		up := &processes.UserProcess{
 			Coon: this.Conn,
 		}
 		up.ServerProcessLogin(mes)
 	case message.RegisterMesType:
+		up := &processes.UserProcess{
+			Coon: this.Conn,
+		}
+		up.ServerPRocessRegister(mes)
 	default:
 		fmt.Println("消息类型不存在,无法处理")
 	}
 	return nil
 }
-
 func (this *Processor) process2() (err error) {
 
 	for {
