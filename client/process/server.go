@@ -11,7 +11,7 @@ import (
 
 func ShowMenu() {
 
-	fmt.Println("------------恭喜xxx登录成功--------------------")
+	fmt.Println("------------恭喜登录成功----------------------")
 	fmt.Println("------------1: 显示用户在线列表---------------")
 	fmt.Println("------------2：发送消息----------------------")
 	fmt.Println("------------3: 信息列表---------------------")
@@ -22,7 +22,7 @@ func ShowMenu() {
 	fmt.Scanf("%d \n", &key)
 	switch key {
 	case 1:
-		fmt.Println("显示用户在线列表")
+		outputOnlineUser()
 	case 2:
 		fmt.Println("发送消息")
 	case 3:
@@ -40,13 +40,11 @@ func serverProcessMes(conn net.Conn) {
 		Conn: conn,
 	}
 	for {
-		fmt.Println("客户端等待读取服务器发送的消息")
 		mes, err := tf.ReadPkg()
 		if err != nil {
 			fmt.Println("tf.ReadPkg err= ", err)
 			return
 		}
-		fmt.Println("mes = %v \n", mes)
 		switch mes.Type {
 		case message.NotifyUserStatusMesType:
 			var notifyUserStatusMes message.NotifyUserStatusMes

@@ -104,7 +104,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	var loginResMes message.LoginResMes
 	err = json.Unmarshal([]byte(mes.Data), &loginResMes)
 	if loginResMes.Code == 200 {
-		fmt.Println("当前用户列表如下")
+		fmt.Println("登录成功")
 		for _, v := range loginResMes.UserId {
 			if v != userId {
 				user := &message.User{

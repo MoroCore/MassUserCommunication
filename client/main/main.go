@@ -39,6 +39,7 @@ func main() {
 			fmt.Scanf("%d \n", &userId)
 			fmt.Println("请输入用户的密码")
 			fmt.Scanf("%s \n", &userPwd)
+			process.UserId = userId
 			up := &process.UserProcess{}
 			up.Login(userId, userPwd)
 		case 2:

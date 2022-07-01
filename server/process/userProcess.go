@@ -50,7 +50,6 @@ func (this *UserProcess) ServerPRocessRegister(mes *message.Message) (err error)
 	return
 }
 
-//登录逻辑
 func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 
 	var loginMes message.LoginMes
@@ -68,13 +67,11 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 		loginResMes.Code = 200
 		this.UserId = user.UserId
 		userMgr.addOnlineUser(this)
-
 		this.NotifyOtherOnlineUser(user.UserId)
-
 		for id, _ := range userMgr.onlineUsers {
 			loginResMes.UserId = append(loginResMes.UserId, id)
 		}
-
+		fmt.Println("登录成功")
 	}
 	if err != nil {
 		loginResMes.Code = 500
@@ -96,15 +93,15 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 func (this *UserProcess) NotifyOtherOnlineUser(userId int) {
 	for id, up := range userMgr.onlineUsers {
 		if id == userId {
-			up.NotifyMeOnline(id)
+			continue
 		}
+		up.NotifyMeOnline(userId)
 		//
 	}
 }
 func (this *UserProcess) NotifyMeOnline(userId int) {
 	var mes message.Message
 	mes.Type = message.NotifyUserStatusMesType
-
 	var notifyUserStatusMes message.NotifyUserStatusMes
 	notifyUserStatusMes.UserId = userId
 	notifyUserStatusMes.Status = message.UserOnLine

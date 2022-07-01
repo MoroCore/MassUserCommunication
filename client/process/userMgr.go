@@ -6,6 +6,7 @@ import (
 )
 
 var onlineUsers map[int]*message.User = make(map[int]*message.User, 10)
+var UserId int
 
 func updateUserStatus(mes *message.NotifyUserStatusMes) {
 
