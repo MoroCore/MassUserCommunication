@@ -1,12 +1,13 @@
 package process
 
 import (
+	"MassUserCommunication/client/model"
 	"MassUserCommunication/common/message"
 	"fmt"
 )
 
 var onlineUsers map[int]*message.User = make(map[int]*message.User, 10)
-var UserId int
+var CurrentUser model.CurUser
 
 func updateUserStatus(mes *message.NotifyUserStatusMes) {
 
