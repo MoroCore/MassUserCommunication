@@ -4,6 +4,7 @@ import (
 	"MassUserCommunication/common/message"
 	"MassUserCommunication/server/utils"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 )
@@ -42,4 +43,22 @@ func (this *SmsProcess) sendMesEachOnlineUser(sms []byte, conn net.Conn) {
 		fmt.Println("转发消息失败 ", err)
 		return
 	}
+}
+func (this *SmsProcess) SendOneMes(mes *message.Message) (err error) {
+
+	var smsMes message.SmsMes
+
+	err = json.Unmarshal([]byte(mes.Data), &smsMes)
+	if err != nil {
+		fmt.Println("SendOneMes json.Unmarshal fail ", err)
+		return
+	}
+	marshal, err := json.Marshal(mes)
+	id := smsMes.ToUserId
+	coon := userMgr.onlineUsers[id].Coon
+	if coon == nil {
+		return errors.New("发送的用户不存在")
+	}
+	this.sendMesEachOnlineUser(marshal, coon)
+	return
 }

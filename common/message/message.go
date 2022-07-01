@@ -7,6 +7,7 @@ const (
 	RegisterResMesType      = "RegisterResMes"
 	NotifyUserStatusMesType = "NotifyUserStatusMes"
 	SmsMesType              = "SmsMes"
+	SmsMesOneType           = "SmsMesOne"
 )
 
 const (
@@ -43,6 +44,8 @@ type NotifyUserStatusMes struct {
 	Status int `json:"status"`
 }
 type SmsMes struct {
-	Context string `json:"context"`
-	User           //匿名结构体
+	Context    string `json:"context"`
+	User              //匿名结构体
+	FromUserId int    `json:"fromUserId"`
+	ToUserId   int    `json:"toUserId"`
 }
